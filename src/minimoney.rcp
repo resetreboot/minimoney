@@ -41,6 +41,11 @@ FORM ID 8000 AT (2 2 156 156)
 BEGIN
 	TITLE "About MiniMoney"
 	BUTTON "OK" ID 8001 AT (CENTER 140 24 13)
-	LABEL "MiniMoney v1.0" ID 8002  AT (CENTER 15)
-	FORMBITMAP AT (103 15) BITMAP 1001
+	LABEL "MiniMoney v1.0" ID 8002  AT (CENTER 40)
+    LABEL "Created by Jose Carlos Cuevas" ID 8003 AT (CENTER 52)
+    LABEL "<reset.reboot@posteo.net>" ID 8004 AT (CENTER 64)
+    LABEL "Licensed under the GPL v3" ID 8005 AT (CENTER 80)
+    LABEL "https://github.com/" ID 8006 AT (CENTER 92)
+    LABEL "resetreboot/minimoney" ID 8006 AT (CENTER 104)
+	FORMBITMAP AT (69 15) BITMAP 1001
 END
