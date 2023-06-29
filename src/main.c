@@ -3,6 +3,42 @@
 #define MainForm 1000
 #define AboutDialog 8000
 #define AboutMenu 1001
+#define MoneyEntriesList 1020
+
+#define listCount 5
+
+
+void *getObjectPtr(FormPtr pForm, Int16 resourceNo) {
+    UInt16 objIndex = FrmGetObjectIndex(pForm, resourceNo);
+    return FrmGetObjectPtr(pForm, objIndex);
+}
+
+static void drawList(Int16 i, RectangleType *bounds, Char **items) {
+    Char *listString[listCount] = {"one", "two", "three", "four", "five"};
+    WinDrawTruncChars (listString[i], StrLen(listString[i]),
+            bounds->topLeft.x,
+            bounds->topLeft.y,
+            bounds->extent.x);
+}
+
+static void setupList(int lIndex) {
+    FormPtr pForm   = FrmGetActiveForm();
+    void    *pList  = getObjectPtr(pForm, lIndex);
+    LstSetListChoices (pList, 0, listCount);
+    LstSetDrawFunction (pList, (ListDrawDataFuncPtr) drawList);
+
+    // Since the list is already showing, we have to redraw it
+    LstDrawList (pList);
+}
+
+// Main Form functions
+
+/* Initialize the Main form
+ *
+ */
+static void mainFormInit(FormPtr pForm) {
+    setupList(MoneyEntriesList);
+}
 
 /*
  * This is the event handler for the main form.  It handles all of
@@ -23,6 +59,7 @@ static Boolean mainFormEventHandler(EventPtr pEvent) {
 
     case frmOpenEvent:
         FrmDrawForm(pForm);
+        mainFormInit(pForm);
         handled = true;
         break;
 
@@ -102,8 +139,7 @@ static Boolean appHandleEvent(EventPtr pEvent) {
     return handled;
 }
 
-
-UInt32 PilotMain(UInt16 cmd, void *cmdPBP, UInt16 launchFlags) {
+UInt32 __attribute__((noinline)) PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags) {
 	EventType event;
     UInt16    error;
 	FormType * frmP;
@@ -149,7 +185,8 @@ UInt32 PilotMain(UInt16 cmd, void *cmdPBP, UInt16 launchFlags) {
 	return 0;
 }
 
-UInt32 __attribute__((section(".vectors"))) __Startup__(void)
+UInt32 __attribute__((section(".vectors"), used)) __Startup__(void);
+UInt32 __attribute__((section(".vectors"), used)) __Startup__(void)
 {
 	SysAppInfoPtr appInfoP;
 	void *prevGlobalsP;
