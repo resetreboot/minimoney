@@ -1,4 +1,4 @@
-PALMDEV         =   /home/reset/Projects/PalmOS/palmdev_V3/
+PALMDEV         =   ../palmdev_V3/
 TOOLCHAIN		?=	$(PALMDEV)buildtools/toolchain/bin/
 SDK			    ?=	$(PALMDEV)buildtools/palm-os-sdk-master/sdk-5r3/include
 PILRC			=	$(PALMDEV)buildtools/pilrc3_3_unofficial/bin/pilrc
