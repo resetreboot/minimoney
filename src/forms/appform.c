@@ -14,7 +14,7 @@ static void drawList(Int16 i, RectangleType *bounds, Char **items) {
 static void setupList(int lIndex) {
     FormPtr pForm   = FrmGetActiveForm();
     void    *pList  = getObjectPtr(pForm, lIndex);
-    LstSetListChoices (pList, 0, 0);
+    LstSetListChoices (pList, 0, 4);
     LstSetDrawFunction (pList, (ListDrawDataFuncPtr) drawList);
 
     // Since the list is already showing, we have to redraw it
@@ -39,6 +39,7 @@ void appFormInit(FormPtr pForm) {
 Boolean appFormEventHandler(EventPtr pEvent) {
     Boolean	handled	= false;
     FormPtr	pForm	= FrmGetActiveForm();
+    FormType * frmP;
     switch (pEvent->eType)
     {
 
@@ -53,9 +54,17 @@ Boolean appFormEventHandler(EventPtr pEvent) {
         handled = true;
         break;
 
-
     // *** ADD EVENT HANDLING HERE *** //
-
+    case ctlSelectEvent:
+        switch (pEvent->data.ctlSelect.controlID) {
+            case AppMainNewButton:
+                frmP = FrmInitForm(NewEntryForm);
+                FrmDoDialog (frmP);
+                FrmDeleteForm (frmP);
+                break;
+        // Add other buttons here!
+        }
+        break;
 
     default:
         break;
@@ -80,6 +89,14 @@ Boolean doAppMenu(FormPtr pForm, UInt16 command) {
             frmP = FrmInitForm (AboutDialog);
 	        FrmDoDialog (frmP);
             FrmDeleteForm (frmP);
+            handled = true;
+            break;
+
+        case NewMenu:
+            frmP = FrmInitForm(NewEntryForm);
+            FrmDoDialog (frmP);
+            FrmDeleteForm (frmP);
+            handled = true;
             break;
 
     }
