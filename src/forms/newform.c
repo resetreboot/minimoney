@@ -1,4 +1,5 @@
 #include <PalmOS.h>
+#include "../PalmTypes.h"
 #include "../uiResourceIDs.h"
 #include "../utils.h"
 #include "../db/db.h"
@@ -28,8 +29,15 @@ DBRecordType readFormData(FormPtr pForm) {
 /* Initialize the form
  *
  */
-// void newFormInit(FormPtr pForm) {
-// }
+void newFormInit(FormPtr pForm) {
+    DateTimeType dt;
+    char *text = MemPtrNew(sizeof(Int16)*9);
+
+    GetCurrentDateTime(&dt);
+    StrPrintF(text, "%02d/%02d/%02d", dt.day, dt.month, dt.year % 100);
+    SetField(NewEntryForm, DateField, text);
+    MemPtrFree(text);
+}
 
 /*
  * This is the event handler for the main form.  It handles all of
@@ -51,7 +59,7 @@ Boolean newFormEventHandler(EventPtr pEvent) {
 
         case frmOpenEvent:
             FrmDrawForm(pForm);
-            // newFormInit(pForm);
+            newFormInit(pForm);
             handled = true;
             break;
 
@@ -73,6 +81,24 @@ Boolean newFormEventHandler(EventPtr pEvent) {
                     FrmInitForm(MainForm);
                     FrmGotoForm(MainForm);
                     break;
+                case DateButton: {
+                    DateTimeType datetime;
+                    GetCurrentDateTime(&datetime);
+                    Int16 month = datetime.month;
+                    Int16 day = datetime.day;
+                    Int16 year = datetime.year;
+
+                    if(SelectDay(selectDayByDay,
+                                 &month,
+                                 &day,
+                                 &year, "Select date")) {
+                        char *text = MemPtrNew(sizeof(Int16)*9);
+                        year = year % 100;
+                        StrPrintF(text, "%02d/%02d/%02d", day, month, year);
+                        SetField(NewEntryForm, DateField, text);
+                        MemPtrFree(text);
+                    }
+                }
             // Add other buttons here!
             }
             break;

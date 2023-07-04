@@ -21,6 +21,8 @@
 #define ConceptField 2006
 #define AmountField 2008
 #define EntryTypeList 2041
+#define DateField 2002
+#define TimeField 2004
 
 // About dialog IDs
 #define AboutDialog 8000

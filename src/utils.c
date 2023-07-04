@@ -101,3 +101,8 @@ void AddCurrency(char *result, char *source) {
     StrCopy(result, source);
     StrCat(result, " $");
 }
+
+void GetCurrentDateTime(DateTimeType *datetime) {
+    Int32 timestamp = TimGetSeconds();
+    TimSecondsToDateTime(timestamp, datetime);
+}

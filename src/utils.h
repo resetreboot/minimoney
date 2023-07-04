@@ -8,5 +8,6 @@ char* GetField(UInt16 formID, UInt16 fieldID);
 void AddPoint(char *result, char *source);
 Int32 ProcessAmount(char *s);
 void AddCurrency(char *result, char *source);
+void GetCurrentDateTime(DateTimeType *datetime);
 
 #endif
