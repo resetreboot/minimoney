@@ -1,11 +1,28 @@
 #include <PalmOS.h>
 #include "uiResourceIDs.h"
 #include "main.h"
+#include "forms/appform.h"
+#include "forms/newform.h"
+#include "db/db.h"
+
+#define ROM_VERSION_REQUIRED	0x02000000		// This application requires PalmOS 2.0 or later
 
 
-void *getObjectPtr(FormPtr pForm, Int16 resourceNo) {
-    UInt16 objIndex = FrmGetObjectIndex(pForm, resourceNo);
-    return FrmGetObjectPtr(pForm, objIndex);
+/*
+ * startApp and stopApp are here for future reference.  They clearly
+ * don't do anything for this program, but it's a good idea to do
+ * program clean-up and shutdown in these files.  One thing that
+ * typically goes here is database opening and closing.
+ */
+
+static void startApp() {return;}
+static void stopApp() {
+    DmOpenRef db = DBOpen();
+    if (db != NULL) {
+        DmCloseDatabase(db);
+    }
+    FtrUnregister(CreatorID, featDB);
+    FrmCloseAllForms();
 }
 
 static Boolean appHandleEvent(EventPtr pEvent) {
@@ -28,9 +45,15 @@ static Boolean appHandleEvent(EventPtr pEvent) {
         * install a form-specific event handler
         */
 
-        if (formId == MainForm)
-            FrmSetEventHandler (pForm, appFormEventHandler);
+        switch (formId) {
+            case MainForm:
+                FrmSetEventHandler (pForm, appFormEventHandler);
+                break;
 
+            case NewEntryForm:
+                FrmSetEventHandler (pForm, newFormEventHandler);
+                break;
+        }
 
         // *** ADD NEW FORM HANDLING HERE *** //
         handled = true;
@@ -67,6 +90,8 @@ UInt32 __attribute__((noinline)) PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 lau
 
 	if (sysAppLaunchCmdNormalLaunch == cmd) {
 
+        startApp();
+
         /*
          * FrmGotForm generates a frmLoadEvent that'll get
          * handled as soon as we have an event handler that
@@ -92,7 +117,7 @@ UInt32 __attribute__((noinline)) PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 lau
 
 		} while (event.eType != appStopEvent);
 
-        FrmCloseAllForms();
+        stopApp();
 	}
 
 	return 0;
