@@ -18,7 +18,9 @@ DBRecordType readFormData(FormPtr pForm) {
 
     // If type is true, is a deposit, if not, an expense
     record.type = (LstGetSelection(pList) == 1);
-    StrCopy(record.date, "01/10/2023");
+    DateTimeType *dt;
+    dt = globalsSlotVal(GLOBALS_CURRENT_DATE);
+    StrPrintF(record.date, "%02d/%02d/%04d", dt->day, dt->month, dt->year);
     StrCopy(record.time, "01:10");
 
     return record;
@@ -34,6 +36,7 @@ void newFormInit(FormPtr pForm) {
     char *text = MemPtrNew(sizeof(Int16)*9);
 
     GetCurrentDateTime(&dt);
+    *globalsSlotPtr(GLOBALS_CURRENT_DATE) = &dt;
     StrPrintF(text, "%02d/%02d/%02d", dt.day, dt.month, dt.year % 100);
     SetField(NewEntryForm, DateField, text);
     MemPtrFree(text);
@@ -92,9 +95,13 @@ Boolean newFormEventHandler(EventPtr pEvent) {
                                  &month,
                                  &day,
                                  &year, "Select date")) {
+                        // Store in globals the date
+                        datetime.month = month;
+                        datetime.day = day;
+                        datetime.year = year;
+                        *globalsSlotPtr(GLOBALS_CURRENT_DATE) = &datetime;
                         char *text = MemPtrNew(sizeof(Int16)*9);
-                        year = year % 100;
-                        StrPrintF(text, "%02d/%02d/%02d", day, month, year);
+                        StrPrintF(text, "%02d/%02d/%02d", day, month, year % 100);
                         SetField(NewEntryForm, DateField, text);
                         MemPtrFree(text);
                     }

@@ -1,5 +1,6 @@
 #include <PalmOS.h>
 #include "db.h"
+#include "../utils.h"
 #include "../uiResourceIDs.h"
 #include "../main.h"
 
@@ -9,11 +10,9 @@ DmOpenRef getDatabaseHandler() {
     Err errno;
     UInt32 data;
 
-    errno = FtrGet(CreatorID, featDB, &data);
-    if (errno == ftrErrNoSuchFeature) {
+    if (!(db = globalsSlotVal(GLOBALS_DB_REF))) {
         return 0;
     }
-    db = (DmOpenRef) data;
     return db;
 }
 
@@ -43,12 +42,7 @@ DmOpenRef DBOpen() {
 
 	}
 
-    // retcode = FtrSet(CreatorID, featDB, *(UInt32 *)db);
-    retcode = FtrSet(CreatorID, featDB, (UInt32)db);
-    if (retcode != 0) {
-        FrmCustomAlert(ErrorAlert, "Unable to store the dabatase handler after creation", "", "");
-    }
-
+    *globalsSlotPtr(GLOBALS_DB_REF) = db;
     return db;
 }
 
